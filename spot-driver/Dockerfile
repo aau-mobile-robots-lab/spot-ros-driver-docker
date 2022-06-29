@@ -2,7 +2,8 @@ FROM ros:melodic-ros-core
 
 # Install the Boston Dynamics python driver
 RUN apt-get update \
-    && apt-get install -y python3-pip \
+    && apt-get install -y python3-pip python3-netifaces\
+    && pip3 install protobuf==4.0.0rc2 \
     && pip3 install bosdyn-client bosdyn-mission bosdyn-api bosdyn-core \
     && rm -rf /var/lib/apt/lists/*
 
@@ -23,3 +24,9 @@ RUN apt-get update \
     && catkin config --extend /opt/ros/$ROS_DISTRO \
     && catkin build --cmake-args -DCMAKE_BUILD_TYPE=Release -DPYTHON_EXECUTABLE=/usr/bin/python3 -DPYTHON_INCLUDE_DIR=/usr/include/python3.6m -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.6m.so \
     && rm -rf /var/lib/apt/lists/*
+
+# setup entrypoint
+COPY ./ros_entrypoint.sh /
+
+ENTRYPOINT ["/ros_entrypoint.sh"]
+CMD ["roslaunch", "spot_driver", "driver.launch", "username:=user"]
