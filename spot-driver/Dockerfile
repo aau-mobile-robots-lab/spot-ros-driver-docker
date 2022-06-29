@@ -26,7 +26,10 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # setup entrypoint
+COPY ./driver_raw.launch src/spot_ros/spot_driver/launch/
+
+# setup entrypoint
 COPY ./ros_entrypoint.sh /
 
 ENTRYPOINT ["/ros_entrypoint.sh"]
-CMD ["roslaunch", "spot_driver", "driver.launch", "username:=user"]
+CMD ["roslaunch", "spot_driver", "driver_raw.launch", "username:=user"]
